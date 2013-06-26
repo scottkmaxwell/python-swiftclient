@@ -15,6 +15,11 @@
 
 """Miscellaneous utility functions for use with Swift."""
 
+try:
+    basestring
+except Exception:
+    basestring = str
+
 TRUE_VALUES = set(('true', '1', 'yes', 'on', 't', 'y'))
 
 

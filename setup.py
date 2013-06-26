@@ -17,5 +17,5 @@
 import setuptools
 
 setuptools.setup(
-    setup_requires=['d2to1', 'pbr'],
+    setup_requires=['d2to1', 'pbr', 'pyopenssl'],
     d2to1=True)

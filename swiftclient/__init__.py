@@ -17,7 +17,10 @@
 """"
 OpenStack Swift Python client binding.
 """
-from client import *
+try:
+    from client import *
+except ImportError:
+    from .client import *
 
 # At setup.py time, we haven't installed anything yet, so there
 # is nothing that is able to set this version property. Squelching

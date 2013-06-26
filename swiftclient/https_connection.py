@@ -19,7 +19,10 @@ HTTPS/SSL related functionality
 
 import socket
 
-from httplib import HTTPSConnection
+try:
+    from httplib import HTTPSConnection
+except ImportError:
+    from http.client import HTTPSConnection
 
 import OpenSSL
 
@@ -92,4 +95,7 @@ class OpenSSLConnectionDelegator(object):
         return getattr(self.connection, name)
 
     def makefile(self, *args, **kwargs):
-        return socket._fileobject(self.connection, *args, **kwargs)
+        try:
+            return socket._fileobject(self.connection, *args, **kwargs)
+        except AttributeError:
+            return self.connection.makefile(*args, **kwargs)

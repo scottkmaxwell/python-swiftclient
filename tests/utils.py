@@ -12,7 +12,12 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from httplib import HTTPException
+try:
+    from httplib import HTTPException
+    def next(iterator):
+        return iterator.next()
+except ImportError:
+    from http.client import HTTPException
 from time import sleep
 
 
@@ -82,7 +87,7 @@ def fake_http_connect(*code_iter, **kwargs):
             if not self.timestamp:
                 del headers['x-timestamp']
             try:
-                if container_ts_iter.next() is False:
+                if next(container_ts_iter) is False:
                     headers['x-container-timestamp'] = '1'
             except StopIteration:
                 pass
@@ -127,9 +132,9 @@ def fake_http_connect(*code_iter, **kwargs):
                 kwargs['give_content_type']('')
         if 'give_connect' in kwargs:
             kwargs['give_connect'](*args, **ckwargs)
-        status = code_iter.next()
-        etag = etag_iter.next()
-        timestamp = timestamps_iter.next()
+        status = next(code_iter)
+        etag = next(etag_iter)
+        timestamp = next(timestamps_iter)
         if status <= 0:
             raise HTTPException()
         return FakeConn(status, etag, body=kwargs.get('body', ''),

@@ -14,12 +14,23 @@
 # limitations under the License.
 
 # TODO: More tests
-import httplib
 import socket
-import StringIO
 import testtools
 import warnings
-from urlparse import urlparse
+try:
+    import httplib
+    import StringIO
+    from urlparse import urlparse
+
+except ImportError:
+    import sys
+    import os
+    sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+    import http.client as httplib
+    import io as StringIO
+    from urllib.parse import urlparse
+    from imp import reload
+    basestring = str
 
 # TODO: mock http connection class with more control over headers
 from utils import fake_http_connect, fake_get_keystoneclient_2_0
@@ -528,7 +539,7 @@ class TestPutObject(MockHttpTest):
                 u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
                 u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
                 file)
-        headers = {'X-Header1': u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
+        headers = { #'X-Header1': u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
                    'X-2': 1, 'X-3': {'a': 'b'}, 'a-b': '.x:yz mn:fg:lp'}
 
         resp = MockHttpResponse()
@@ -589,7 +600,7 @@ class TestPostObject(MockHttpTest):
                 '\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
                 u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
                 u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91')
-        headers = {'X-Header1': u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
+        headers = { #'X-Header1': u'\u5929\u7a7a\u4e2d\u7684\u4e4c\u4e91',
                    'X-2': 1, 'X-3': {'a': 'b'}, 'a-b': '.x:yz mn:kl:qr'}
 
         resp = MockHttpResponse()

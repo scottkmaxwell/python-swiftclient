@@ -22,11 +22,15 @@ import sys
 import logging
 import warnings
 from functools import wraps
-
-from urllib import quote as _quote
-from urlparse import urlparse, urlunparse
-from httplib import HTTPException, HTTPConnection, HTTPSConnection
 from time import sleep
+
+try:
+    from urllib import quote as _quote
+    from urlparse import urlparse, urlunparse
+    from httplib import HTTPException, HTTPConnection, HTTPSConnection
+except ImportError:
+    from urllib.parse import quote as _quote, urlparse, urlunparse
+    from http.client import HTTPException, HTTPConnection, HTTPSConnection
 
 try:
     from swiftclient.https_connection import HTTPSConnectionNoSSLComp
@@ -77,8 +81,11 @@ def quote(value, safe='/'):
 
 
 def encode_utf8(value):
-    if isinstance(value, unicode):
-        value = value.encode('utf8')
+    try:
+        if isinstance(value, unicode):
+            value = value.encode('utf8')
+    except Exception:
+        pass
     return value
 
 
@@ -887,7 +894,7 @@ def put_object(url, token=None, container=None, name=None, contents=None,
     if content_length is not None:
         headers['Content-Length'] = str(content_length)
     else:
-        for n, v in headers.iteritems():
+        for n, v in headers.items():
             if n.lower() == 'content-length':
                 content_length = int(v)
     if content_type is not None:
@@ -898,7 +905,7 @@ def put_object(url, token=None, container=None, name=None, contents=None,
         if chunk_size is None:
             chunk_size = 65536
         conn.putrequest('PUT', path)
-        for header, value in headers.iteritems():
+        for header, value in headers.items():
             conn.putheader(header, value)
         if content_length is None:
             conn.putheader('Transfer-Encoding', 'chunked')
